@@ -42,7 +42,7 @@ class _MyApp extends State<MyApp> {
             });
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Jokes'),
+            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Joke'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.question_answer_rounded), label: 'Q&A')
           ],
