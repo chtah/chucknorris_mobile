@@ -1,5 +1,5 @@
 import 'package:chucknorris/list.dart';
-import 'package:chucknorris/search.dart';
+import 'package:chucknorris/question_answer.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyApp extends State<MyApp> {
   int selectedPage = 0;
-  final pageOption = [const List(), const Search()];
+  final pageOption = [const List(), const QuestionAnswer()];
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,9 @@ class _MyApp extends State<MyApp> {
             });
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search')
+            BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Jokes'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.question_answer_rounded), label: 'Q&A')
           ],
         ),
       ),
