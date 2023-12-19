@@ -15,9 +15,10 @@ class ListJoke extends StatefulWidget {
 
 class _List extends State<ListJoke> {
   late Future<List<JokeModel>> randomJokes;
-  late Future<List<String>> allCategories;
+  late Future<List<String>> allCategories = Future.value([]);
   late TextEditingController searchController = TextEditingController();
   late Future<SearchModel> jokesBySearch;
+  late List<String> categories = [];
   String categoryController = 'random';
   int totalJoke = 1;
 
@@ -26,7 +27,12 @@ class _List extends State<ListJoke> {
     super.initState();
     updateRandomJokes();
 
-    allCategories = JokeGet().getCategories();
+    JokeGet().getCategories().then((categoryList) {
+      setState(() {
+        categories = ['random', ...categoryList];
+        allCategories = Future.value(categories);
+      });
+    });
     searchController = TextEditingController();
   }
 
@@ -63,84 +69,94 @@ class _List extends State<ListJoke> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.wait([
-        searchController.text.isNotEmpty ? jokesBySearch : randomJokes,
-        allCategories
-      ]),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData) {
-          late List<JokeModel> randomJoke;
-          if (searchController.text.isNotEmpty) {
-            final searched = snapshot.data![0] as SearchModel;
-            randomJoke = searched.result;
-          } else {
-            randomJoke = snapshot.data![0] as List<JokeModel>;
-          }
-          final categories = snapshot.data![1] as List<String>;
-          final addRandomCategory = ['random', ...categories];
-          return Column(
+    return Column(
+      children: [
+        if (searchController.text.isEmpty)
+          DropdownCategories(
+            itemList: categories,
+            controller: categoryController,
+            onChange: (value) {
+              if (value != 'random') {
+                setState(
+                  () {
+                    categoryController = value;
+                    updateRandomJokes();
+                  },
+                );
+              } else {
+                setState(
+                  () {
+                    categoryController = value;
+                    updateRandomJokes();
+                  },
+                );
+              }
+            },
+          ),
+        if (searchController.text.isEmpty)
+          DropdownCategories(
+            itemList: const ['1', '5', '10'],
+            controller: totalJoke.toString(),
+            onChange: (value) {
+              if (value != null) {
+                setState(
+                  () {
+                    totalJoke = int.parse(value);
+                    updateRandomJokes();
+                  },
+                );
+              }
+            },
+          ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
             children: [
-              DropdownCategories(
-                itemList: addRandomCategory,
-                controller: categoryController,
-                onChange: (value) {
-                  if (value != 'random') {
-                    setState(
-                      () {
-                        categoryController = value;
-                        updateRandomJokes();
+              Expanded(
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter search text',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchController.clear();
+                        });
                       },
-                    );
-                  } else {
-                    setState(
-                      () {
-                        categoryController = value;
-                        updateRandomJokes();
-                      },
-                    );
-                  }
-                },
-              ),
-              DropdownCategories(
-                itemList: const ['1', '5', '10'],
-                controller: totalJoke.toString(),
-                onChange: (value) {
-                  if (value != null) {
-                    setState(
-                      () {
-                        totalJoke = int.parse(value);
-                        updateRandomJokes();
-                      },
-                    );
-                  }
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter search text',
-                        ),
-                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: searchJokes,
-                      child: const Text('Search'),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
+              ElevatedButton(
+                onPressed: searchJokes,
+                child: const Text('Search'),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: FutureBuilder(
+            future: Future.wait([
+              searchController.text.isNotEmpty ? jokesBySearch : randomJokes,
+              allCategories
+            ]),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData) {
+                late List<JokeModel> randomJoke;
+                if (searchController.text.isNotEmpty) {
+                  final searched = snapshot.data![0] as SearchModel;
+                  randomJoke = searched.result;
+                } else {
+                  randomJoke = snapshot.data![0] as List<JokeModel>;
+                }
+                final dataCategory = snapshot.data![1] as List<String>;
+                categories = ['random', ...dataCategory];
+                return ListView.builder(
                   itemCount: randomJoke.length,
                   itemBuilder: (context, index) {
                     return Card(
@@ -150,14 +166,14 @@ class _List extends State<ListJoke> {
                       ),
                     );
                   },
-                ),
-              )
-            ],
-          );
-        } else {
-          return const Center(child: Text('No data available'));
-        }
-      },
+                );
+              } else {
+                return const Center(child: Text('No data available'));
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }
