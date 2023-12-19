@@ -1,4 +1,4 @@
-import 'package:chucknorris/list.dart';
+import 'package:chucknorris/list_joke.dart';
 import 'package:chucknorris/question_answer.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyApp extends State<MyApp> {
   int selectedPage = 0;
-  final pageOption = [const List(), const QuestionAnswer()];
+  final pageOption = [const ListJoke(), const QuestionAnswer()];
 
   @override
   Widget build(BuildContext context) {

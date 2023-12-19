@@ -3,32 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
 import 'package:chucknorris/model/joke_model.dart';
 
-class List extends StatefulWidget {
-  const List({super.key});
+class ListJoke extends StatefulWidget {
+  const ListJoke({super.key});
 
   @override
-  State<List> createState() {
+  State<ListJoke> createState() {
     return _List();
   }
 }
 
-class _List extends State<List> {
-  late Future<Joke> randomJoke;
+class _List extends State<ListJoke> {
+  late Future<List<JokeModel>> randomJokes;
   late Future<dynamic> allCategories;
   String _categoryController = '';
+  int totalJoke = 1;
 
   @override
   void initState() {
     super.initState();
+    _updateRandomJokes();
 
-    randomJoke = JokeGet().getJoke();
     allCategories = JokeGet().getCategories();
+  }
+
+  void _updateRandomJokes() {
+    List<Future<JokeModel>> jokeList = [];
+    for (int i = 0; i < totalJoke; i++) {
+      jokeList.add(JokeGet().getJoke());
+    }
+
+    setState(() {
+      randomJokes = Future.wait(jokeList);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.wait([randomJoke, allCategories]),
+      future: Future.wait([randomJokes, allCategories]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -52,7 +64,33 @@ class _List extends State<List> {
                     }
                   },
                   hint: 'Category'),
-              Text('${randomJoke.value}'),
+              DropdownCategories(
+                  itemList: const ['1', '5', '10'],
+                  controller: totalJoke.toString(),
+                  onChange: (value) {
+                    if (value != null) {
+                      setState(
+                        () {
+                          totalJoke = int.parse(value);
+                          _updateRandomJokes();
+                        },
+                      );
+                    }
+                  },
+                  hint: 'Category'),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: randomJoke.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(randomJoke[index].value),
+                      ),
+                    );
+                  },
+                ),
+              )
             ],
           );
         } else {

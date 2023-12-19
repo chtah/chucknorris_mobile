@@ -1,4 +1,4 @@
-class Joke {
+class JokeModel {
   dynamic categories;
   String createdAt;
   String iconUrl;
@@ -7,7 +7,7 @@ class Joke {
   String url;
   String value;
 
-  Joke({
+  JokeModel({
     required this.categories,
     required this.createdAt,
     required this.iconUrl,
@@ -17,8 +17,8 @@ class Joke {
     required this.value,
   });
 
-  factory Joke.fromJson(Map<String, dynamic> json) {
-    return Joke(
+  factory JokeModel.fromJson(Map<String, dynamic> json) {
+    return JokeModel(
       categories: json['categories'],
       createdAt: json['created_at'],
       iconUrl: json['icon_url'],
