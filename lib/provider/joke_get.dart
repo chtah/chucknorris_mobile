@@ -38,4 +38,24 @@ class JokeGet {
       throw Exception('Fetch Error');
     }
   }
+
+  Future<List<JokeModel>> getJokeByText(String text) async {
+    final res = await http
+        .get(Uri.parse('https://api.chucknorris.io/jokes/search?query=$text'));
+
+    if (res.statusCode == 200) {
+      final decodedRes = jsonDecode(res.body);
+      if (decodedRes['result'] is List) {
+        final List<dynamic> results = decodedRes['result'];
+        final List<JokeModel> jokes =
+            results.map((result) => JokeModel.fromJson(result)).toList();
+        print(jokes);
+        return jokes;
+      } else {
+        throw Exception('Invalid response format');
+      }
+    } else {
+      throw Exception('Fetch Error');
+    }
+  }
 }

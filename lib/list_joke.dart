@@ -1,3 +1,4 @@
+import 'package:chucknorris/model/search_model.dart';
 import 'package:chucknorris/widgets/dropdown_categories.dart';
 import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
@@ -15,6 +16,8 @@ class ListJoke extends StatefulWidget {
 class _List extends State<ListJoke> {
   late Future<List<JokeModel>> randomJokes;
   late Future<List<String>> allCategories;
+  late TextEditingController searchController = TextEditingController();
+  late Future<SearchModel> jokesBySearch;
   String categoryController = 'random';
   int totalJoke = 1;
 
@@ -24,6 +27,7 @@ class _List extends State<ListJoke> {
     updateRandomJokes();
 
     allCategories = JokeGet().getCategories();
+    searchController = TextEditingController();
   }
 
   void updateRandomJokes() {
@@ -41,17 +45,42 @@ class _List extends State<ListJoke> {
     });
   }
 
+  void searchJokes() async {
+    final searchText = searchController.text;
+    if (searchText.isNotEmpty) {
+      try {
+        final searchResult = await JokeGet().getJokeByText(searchText);
+        setState(() {
+          jokesBySearch = Future.value(
+              SearchModel(total: searchResult.length, result: searchResult));
+          print('Test: $jokesBySearch');
+        });
+      } catch (error) {
+        print('Error fetching search results: $error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Future.wait([randomJokes, allCategories]),
+      future: Future.wait([
+        searchController.text.isNotEmpty ? jokesBySearch : randomJokes,
+        allCategories
+      ]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final randomJoke = snapshot.data![0] as List<JokeModel>;
+          late List<JokeModel> randomJoke;
+          if (searchController.text.isNotEmpty) {
+            final searched = snapshot.data![0] as SearchModel;
+            randomJoke = searched.result;
+          } else {
+            randomJoke = snapshot.data![0] as List<JokeModel>;
+          }
           final categories = snapshot.data![1] as List<String>;
           final addRandomCategory = ['random', ...categories];
           return Column(
@@ -90,6 +119,25 @@ class _List extends State<ListJoke> {
                     );
                   }
                 },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter search text',
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: searchJokes,
+                      child: const Text('Search'),
+                    ),
+                  ],
+                ),
               ),
               Expanded(
                 child: ListView.builder(
