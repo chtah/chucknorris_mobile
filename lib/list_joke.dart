@@ -15,7 +15,7 @@ class ListJoke extends StatefulWidget {
 class _List extends State<ListJoke> {
   late Future<List<JokeModel>> randomJokes;
   late Future<List<String>> allCategories;
-  String categoryController = '';
+  String categoryController = 'random';
   int totalJoke = 1;
 
   @override
@@ -29,7 +29,7 @@ class _List extends State<ListJoke> {
   void updateRandomJokes() {
     List<Future<JokeModel>> jokeList = [];
     for (int i = 0; i < totalJoke; i++) {
-      if (categoryController.isNotEmpty) {
+      if (categoryController != 'random') {
         jokeList.add(JokeGet().getJokeByCategory(categoryController));
       } else {
         jokeList.add(JokeGet().getJoke());
@@ -53,36 +53,44 @@ class _List extends State<ListJoke> {
         } else if (snapshot.hasData) {
           final randomJoke = snapshot.data![0] as List<JokeModel>;
           final categories = snapshot.data![1] as List<String>;
+          final addRandomCategory = ['random', ...categories];
           return Column(
             children: [
               DropdownCategories(
-                  itemList: categories,
-                  controller: categoryController,
-                  onChange: (value) {
-                    if (value != null) {
-                      setState(
-                        () {
-                          categoryController = value;
-                          updateRandomJokes();
-                        },
-                      );
-                    }
-                  },
-                  hint: 'Category'),
+                itemList: addRandomCategory,
+                controller: categoryController,
+                onChange: (value) {
+                  if (value != 'random') {
+                    setState(
+                      () {
+                        categoryController = value;
+                        updateRandomJokes();
+                      },
+                    );
+                  } else {
+                    setState(
+                      () {
+                        categoryController = value;
+                        updateRandomJokes();
+                      },
+                    );
+                  }
+                },
+              ),
               DropdownCategories(
-                  itemList: const ['1', '5', '10'],
-                  controller: totalJoke.toString(),
-                  onChange: (value) {
-                    if (value != null) {
-                      setState(
-                        () {
-                          totalJoke = int.parse(value);
-                          updateRandomJokes();
-                        },
-                      );
-                    }
-                  },
-                  hint: 'Category'),
+                itemList: const ['1', '5', '10'],
+                controller: totalJoke.toString(),
+                onChange: (value) {
+                  if (value != null) {
+                    setState(
+                      () {
+                        totalJoke = int.parse(value);
+                        updateRandomJokes();
+                      },
+                    );
+                  }
+                },
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: randomJoke.length,

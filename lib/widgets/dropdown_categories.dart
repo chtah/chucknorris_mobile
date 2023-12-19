@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
 class DropdownCategories extends StatelessWidget {
-  const DropdownCategories(
-      {super.key,
-      required this.itemList,
-      required this.controller,
-      required this.onChange,
-      required this.hint});
+  const DropdownCategories({
+    super.key,
+    required this.itemList,
+    required this.controller,
+    required this.onChange,
+  });
 
   final List<String> itemList;
   final String controller;
   final void Function(dynamic) onChange;
-  final String hint;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class DropdownCategories extends StatelessWidget {
                     );
                   },
                 ).toList(),
-                hint: Text(controller.isEmpty ? hint : controller),
+                hint: Text(controller == 'random' ? 'random' : controller),
                 onChanged: onChange,
               ),
             ),
