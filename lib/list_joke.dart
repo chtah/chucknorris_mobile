@@ -14,22 +14,26 @@ class ListJoke extends StatefulWidget {
 
 class _List extends State<ListJoke> {
   late Future<List<JokeModel>> randomJokes;
-  late Future<dynamic> allCategories;
-  String _categoryController = '';
+  late Future<List<String>> allCategories;
+  String categoryController = '';
   int totalJoke = 1;
 
   @override
   void initState() {
     super.initState();
-    _updateRandomJokes();
+    updateRandomJokes();
 
     allCategories = JokeGet().getCategories();
   }
 
-  void _updateRandomJokes() {
+  void updateRandomJokes() {
     List<Future<JokeModel>> jokeList = [];
     for (int i = 0; i < totalJoke; i++) {
-      jokeList.add(JokeGet().getJoke());
+      if (categoryController.isNotEmpty) {
+        jokeList.add(JokeGet().getJokeByCategory(categoryController));
+      } else {
+        jokeList.add(JokeGet().getJoke());
+      }
     }
 
     setState(() {
@@ -47,18 +51,19 @@ class _List extends State<ListJoke> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          final randomJoke = snapshot.data![0];
-          final categories = snapshot.data![1];
+          final randomJoke = snapshot.data![0] as List<JokeModel>;
+          final categories = snapshot.data![1] as List<String>;
           return Column(
             children: [
               DropdownCategories(
                   itemList: categories,
-                  controller: _categoryController,
+                  controller: categoryController,
                   onChange: (value) {
                     if (value != null) {
                       setState(
                         () {
-                          _categoryController = value;
+                          categoryController = value;
+                          updateRandomJokes();
                         },
                       );
                     }
@@ -72,7 +77,7 @@ class _List extends State<ListJoke> {
                       setState(
                         () {
                           totalJoke = int.parse(value);
-                          _updateRandomJokes();
+                          updateRandomJokes();
                         },
                       );
                     }

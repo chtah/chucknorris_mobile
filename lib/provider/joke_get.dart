@@ -15,9 +15,9 @@ class JokeGet {
     }
   }
 
-  Future<JokeModel> getJokeByCategory() async {
+  Future<JokeModel> getJokeByCategory(String category) async {
     final res = await http.get(Uri.parse(
-        'https://api.chucknorris.io/jokes/random?category={category}'));
+        'https://api.chucknorris.io/jokes/random?category=$category'));
 
     if (res.statusCode == 200) {
       final decodedRes = jsonDecode(res.body);
