@@ -1,8 +1,11 @@
+import 'package:chucknorris/widgets/qa_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class QuestionAnswer extends StatefulWidget {
-  const QuestionAnswer({super.key});
+  const QuestionAnswer({
+    super.key,
+  });
 
   @override
   State<QuestionAnswer> createState() {
@@ -11,8 +14,18 @@ class QuestionAnswer extends StatefulWidget {
 }
 
 class _QuestionAnswer extends State<QuestionAnswer> {
+  bool isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
-    return const Text('Question Answer');
+    return const Column(
+      children: [
+        QACard(question: 'question', answer: 'answer'),
+        QACard(question: 'question', answer: 'answer'),
+        QACard(question: 'question', answer: 'answer'),
+        QACard(question: 'question', answer: 'answer'),
+        QACard(question: 'question', answer: 'answer')
+      ],
+    );
   }
 }
