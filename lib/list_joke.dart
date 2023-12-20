@@ -4,6 +4,7 @@ import 'package:chucknorris/widgets/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
 import 'package:chucknorris/model/joke_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ListJoke extends StatefulWidget {
   const ListJoke({super.key});
@@ -14,27 +15,66 @@ class ListJoke extends StatefulWidget {
   }
 }
 
-class _List extends State<ListJoke> {
-  late Future<List<JokeModel>> randomJokes;
+class _List extends State<ListJoke> with WidgetsBindingObserver {
+  late Future<List<JokeModel>> randomJokes = Future.value([]);
   late Future<List<String>> allCategories = Future.value([]);
   late TextEditingController searchController = TextEditingController();
   late Future<SearchModel> jokesBySearch;
   late List<String> categories = [];
   String categoryController = 'random';
   int totalJoke = 1;
+  List<JokeModel> fetchedJokes = [];
 
   @override
   void initState() {
     super.initState();
-    updateRandomJokes();
+
+    WidgetsBinding.instance.addObserver(this);
+    _loadSavedState();
+
     JokeGet().getCategories().then((categoryList) {
       setState(() {
         categories = [...categoryList];
         allCategories = Future.value(categories);
       });
+      updateRandomJokes();
     });
 
     searchController = TextEditingController();
+    jokesBySearch = Future.value(SearchModel(total: 0, result: []));
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive) {
+      _saveState();
+    }
+  }
+
+  void _loadSavedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      categoryController = prefs.getString('category') ?? 'random';
+      totalJoke = prefs.getInt('totalJoke') ?? 1;
+      searchController.text = prefs.getString('searchText') ?? '';
+
+      if (searchController.text.isNotEmpty) {
+        searchJokes();
+      }
+    });
+  }
+
+  void _saveState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('category', categoryController);
+    await prefs.setInt('totalJoke', totalJoke);
+    await prefs.setString('searchText', searchController.text);
   }
 
   void updateRandomJokes() {
@@ -57,11 +97,13 @@ class _List extends State<ListJoke> {
     if (searchText.isNotEmpty) {
       try {
         final searchResult = await JokeGet().getJokeByText(searchText);
-        setState(() {
-          jokesBySearch = Future.value(
-              SearchModel(total: searchResult.length, result: searchResult));
-          print('Test: $jokesBySearch');
-        });
+        setState(
+          () {
+            jokesBySearch = Future.value(
+              SearchModel(total: searchResult.length, result: searchResult),
+            );
+          },
+        );
       } catch (error) {
         print('Error fetching search results: $error');
       }
@@ -182,20 +224,22 @@ class _List extends State<ListJoke> {
                           );
                         },
                         child: Card(
-                          child: Stack(children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(randomJoke[index].value),
-                            ),
-                            Positioned(
-                              bottom: 6,
-                              right: 6,
-                              child: Image.asset(
-                                  'assets/images/chuck_norris_avatar.png',
-                                  width: 20,
-                                  height: 20),
-                            )
-                          ]),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(randomJoke[index].value),
+                              ),
+                              Positioned(
+                                bottom: 6,
+                                right: 6,
+                                child: Image.asset(
+                                    'assets/images/chuck_norris_avatar.png',
+                                    width: 20,
+                                    height: 20),
+                              )
+                            ],
+                          ),
                         ),
                       );
                     },

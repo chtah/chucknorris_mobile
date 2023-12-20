@@ -19,13 +19,13 @@ class JokeModel {
 
   factory JokeModel.fromJson(Map<String, dynamic> json) {
     return JokeModel(
-      categories: json['categories'],
-      createdAt: json['created_at'],
-      iconUrl: json['icon_url'],
-      id: json['id'],
-      updatedAt: json['updated_at'],
-      url: json['url'],
-      value: json['value'],
+      categories: json['categories'] ?? [],
+      createdAt: json['created_at'] ?? '',
+      iconUrl: json['icon_url'] ?? '',
+      id: json['id'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
+      url: json['url'] ?? '',
+      value: json['value'] ?? '',
     );
   }
 }
