@@ -29,7 +29,7 @@ class _List extends State<ListJoke> {
 
     JokeGet().getCategories().then((categoryList) {
       setState(() {
-        categories = ['random', ...categoryList];
+        categories = [...categoryList];
         allCategories = Future.value(categories);
       });
     });
@@ -69,111 +69,132 @@ class _List extends State<ListJoke> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (searchController.text.isEmpty)
-          DropdownCategories(
-            itemList: categories,
-            controller: categoryController,
-            onChange: (value) {
-              if (value != 'random') {
-                setState(
-                  () {
-                    categoryController = value;
-                    updateRandomJokes();
-                  },
-                );
-              } else {
-                setState(
-                  () {
-                    categoryController = value;
-                    updateRandomJokes();
-                  },
-                );
-              }
-            },
-          ),
-        if (searchController.text.isEmpty)
-          DropdownCategories(
-            itemList: const ['1', '5', '10'],
-            controller: totalJoke.toString(),
-            onChange: (value) {
-              if (value != null) {
-                setState(
-                  () {
-                    totalJoke = int.parse(value);
-                    updateRandomJokes();
-                  },
-                );
-              }
-            },
-          ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter search text',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          searchController.clear();
-                        });
-                      },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: Column(
+        children: [
+          if (searchController.text.isEmpty)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: DropdownCategories(
+                    itemList: categories,
+                    controller: categoryController,
+                    onChange: (value) {
+                      if (value != 'random') {
+                        setState(
+                          () {
+                            categoryController = value;
+                            updateRandomJokes();
+                          },
+                        );
+                      } else {
+                        setState(
+                          () {
+                            categoryController = value;
+                            updateRandomJokes();
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ),
+                if (searchController.text.isEmpty)
+                  DropdownCategories(
+                    itemList: const ['1', '5', '10'],
+                    controller: totalJoke.toString(),
+                    onChange: (value) {
+                      if (value != null) {
+                        setState(
+                          () {
+                            totalJoke = int.parse(value);
+                            updateRandomJokes();
+                          },
+                        );
+                      }
+                    },
+                  ),
+              ],
+            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter search text',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            searchController.clear();
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: searchJokes,
-                child: const Text('Search'),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: searchJokes,
+                  child: const Text('Search'),
+                ),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: FutureBuilder(
-            future: Future.wait([
-              searchController.text.isNotEmpty ? jokesBySearch : randomJokes,
-              allCategories
-            ]),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                late List<JokeModel> randomJoke;
-                if (searchController.text.isNotEmpty) {
-                  final searched = snapshot.data![0] as SearchModel;
-                  randomJoke = searched.result;
+          Expanded(
+            child: FutureBuilder(
+              future: Future.wait([
+                searchController.text.isNotEmpty ? jokesBySearch : randomJokes,
+                allCategories
+              ]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  late List<JokeModel> randomJoke;
+                  if (searchController.text.isNotEmpty) {
+                    final searched = snapshot.data![0] as SearchModel;
+                    randomJoke = searched.result;
+                  } else {
+                    randomJoke = snapshot.data![0] as List<JokeModel>;
+                  }
+                  final dataCategory = snapshot.data![1] as List<String>;
+                  categories = ['random', ...dataCategory];
+                  return ListView.builder(
+                    itemCount: randomJoke.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Stack(children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(randomJoke[index].value),
+                          ),
+                          Positioned(
+                            bottom: 6,
+                            right: 6,
+                            child: Image.asset(
+                                'assets/images/chuck_norris_avatar.png',
+                                width: 20,
+                                height: 20),
+                          )
+                        ]),
+                      );
+                    },
+                  );
                 } else {
-                  randomJoke = snapshot.data![0] as List<JokeModel>;
+                  return const Center(child: Text('No data available'));
                 }
-                final dataCategory = snapshot.data![1] as List<String>;
-                categories = ['random', ...dataCategory];
-                return ListView.builder(
-                  itemCount: randomJoke.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(randomJoke[index].value),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return const Center(child: Text('No data available'));
-              }
-            },
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

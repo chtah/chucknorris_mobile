@@ -15,7 +15,7 @@ class DropdownCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 150,
+      width: 120,
       child: Column(
         children: [
           InputDecorator(
