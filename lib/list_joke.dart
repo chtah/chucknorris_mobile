@@ -1,5 +1,6 @@
 import 'package:chucknorris/model/search_model.dart';
 import 'package:chucknorris/widgets/dropdown_categories.dart';
+import 'package:chucknorris/widgets/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
 import 'package:chucknorris/model/joke_model.dart';
@@ -26,13 +27,13 @@ class _List extends State<ListJoke> {
   void initState() {
     super.initState();
     updateRandomJokes();
-
     JokeGet().getCategories().then((categoryList) {
       setState(() {
         categories = [...categoryList];
         allCategories = Future.value(categories);
       });
     });
+
     searchController = TextEditingController();
   }
 
@@ -169,21 +170,33 @@ class _List extends State<ListJoke> {
                   return ListView.builder(
                     itemCount: randomJoke.length,
                     itemBuilder: (context, index) {
-                      return Card(
-                        child: Stack(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(randomJoke[index].value),
-                          ),
-                          Positioned(
-                            bottom: 6,
-                            right: 6,
-                            child: Image.asset(
-                                'assets/images/chuck_norris_avatar.png',
-                                width: 20,
-                                height: 20),
-                          )
-                        ]),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WebViewScreen(
+                                url: randomJoke[index].url,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          child: Stack(children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(randomJoke[index].value),
+                            ),
+                            Positioned(
+                              bottom: 6,
+                              right: 6,
+                              child: Image.asset(
+                                  'assets/images/chuck_norris_avatar.png',
+                                  width: 20,
+                                  height: 20),
+                            )
+                          ]),
+                        ),
                       );
                     },
                   );

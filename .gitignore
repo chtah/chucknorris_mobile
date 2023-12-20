@@ -47,5 +47,3 @@ app.*.map.json
 /windows
 /web
 /test
-/ios
-/android
