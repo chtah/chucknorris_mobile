@@ -63,6 +63,10 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
       categoryController = prefs.getString('category') ?? 'random';
       totalJoke = prefs.getInt('totalJoke') ?? 1;
       searchController.text = prefs.getString('searchText') ?? '';
+
+      if (searchController.text.isNotEmpty) {
+        searchJokes();
+      }
     });
   }
 
