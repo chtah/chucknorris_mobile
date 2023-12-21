@@ -102,6 +102,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
             jokesBySearch = Future.value(
               SearchModel(total: searchResult.length, result: searchResult),
             );
+            _saveState();
           },
         );
       } catch (error) {
@@ -131,6 +132,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                           () {
                             categoryController = value;
                             updateRandomJokes();
+                            _saveState();
                           },
                         );
                       } else {
@@ -138,6 +140,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                           () {
                             categoryController = value;
                             updateRandomJokes();
+                            _saveState();
                           },
                         );
                       }
@@ -154,6 +157,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                           () {
                             totalJoke = int.parse(value);
                             updateRandomJokes();
+                            _saveState();
                           },
                         );
                       }
