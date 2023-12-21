@@ -193,15 +193,24 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  width: 15,
+                ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 241, 90, 36)),
                   onPressed: () {
-                    searchJokes;
+                    searchJokes();
                     FocusScope.of(context).unfocus();
-                    _saveState();
                   },
                   child: const Text(
                     'Search',
                     style: TextStyle(
+                        color: Colors.white,
                         fontFamily: 'Courier New',
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
