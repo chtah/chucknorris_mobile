@@ -1,5 +1,6 @@
 import 'package:chucknorris/model/search_model.dart';
-import 'package:chucknorris/widgets/dropdown_categories.dart';
+import 'package:chucknorris/widgets/animation_logo.dart';
+import 'package:chucknorris/widgets/dropdown_list.dart';
 import 'package:chucknorris/widgets/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
@@ -11,11 +12,11 @@ class ListJoke extends StatefulWidget {
 
   @override
   State<ListJoke> createState() {
-    return _List();
+    return _ListJoke();
   }
 }
 
-class _List extends State<ListJoke> with WidgetsBindingObserver {
+class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
   late Future<List<JokeModel>> randomJokes = Future.value([]);
   late Future<List<String>> allCategories = Future.value([]);
   late TextEditingController searchController = TextEditingController();
@@ -24,6 +25,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
   String categoryController = 'random';
   int totalJoke = 1;
   List<JokeModel> fetchedJokes = [];
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -106,7 +108,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
           },
         );
       } catch (error) {
-        print('Error fetching search results: $error');
+        errorMessage = 'Error Message: $error';
       }
     }
   }
@@ -114,43 +116,44 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
+          const RotateImage(),
           if (searchController.text.isEmpty)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: DropdownCategories(
-                    itemList: categories,
-                    controller: categoryController,
-                    onChange: (value) {
-                      if (value != 'random') {
-                        setState(
-                          () {
-                            categoryController = value;
-                            updateRandomJokes();
-                            _saveState();
-                          },
-                        );
-                      } else {
-                        setState(
-                          () {
-                            categoryController = value;
-                            updateRandomJokes();
-                            _saveState();
-                          },
-                        );
-                      }
-                    },
-                  ),
+                DropdownList(
+                  itemList: categories,
+                  controller: categoryController,
+                  label: 'Category',
+                  onChange: (value) {
+                    if (value != 'random') {
+                      setState(
+                        () {
+                          categoryController = value;
+                          updateRandomJokes();
+                          _saveState();
+                        },
+                      );
+                    } else {
+                      setState(
+                        () {
+                          categoryController = value;
+                          updateRandomJokes();
+                          _saveState();
+                        },
+                      );
+                    }
+                  },
                 ),
+                const SizedBox(width: 50),
                 if (searchController.text.isEmpty)
-                  DropdownCategories(
+                  DropdownList(
                     itemList: const ['1', '5', '10'],
                     controller: totalJoke.toString(),
+                    label: 'Total',
                     onChange: (value) {
                       if (value != null) {
                         setState(
@@ -174,20 +177,44 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                     controller: searchController,
                     decoration: InputDecoration(
                       hintText: 'Enter search text',
+                      hintStyle: const TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
                             searchController.clear();
+                            FocusScope.of(context).unfocus();
                           });
                         },
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(
+                  width: 15,
+                ),
                 ElevatedButton(
-                  onPressed: searchJokes,
-                  child: const Text('Search'),
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 241, 90, 36)),
+                  onPressed: () {
+                    searchJokes();
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: const Text(
+                    'Search',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Courier New',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
@@ -200,7 +227,10 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: errorMessage.isNotEmpty
+                          ? Text(errorMessage)
+                          : const CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
@@ -228,19 +258,46 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                           );
                         },
                         child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                              color: Color.fromARGB(255, 241, 90, 36),
+                            ),
+                          ),
                           child: Stack(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(randomJoke[index].value),
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      randomJoke[index].value,
+                                      style: const TextStyle(
+                                          fontFamily: 'Courier New',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
                               ),
                               Positioned(
                                 bottom: 6,
                                 right: 6,
-                                child: Image.asset(
-                                    'assets/images/chuck_norris_avatar.png',
-                                    width: 20,
-                                    height: 20),
+                                // child: Image.network(
+                                //   randomJoke[index].icon_url,
+                                //   width: 20,
+                                //   height: 20,
+                                // ), // !!cant use because image link dead
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset(
+                                      'assets/images/chuck_norris_avatar.png',
+                                      width: 20,
+                                      height: 20),
+                                ),
                               )
                             ],
                           ),
