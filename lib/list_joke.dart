@@ -1,4 +1,5 @@
 import 'package:chucknorris/model/search_model.dart';
+import 'package:chucknorris/widgets/animation_logo.dart';
 import 'package:chucknorris/widgets/dropdown_list.dart';
 import 'package:chucknorris/widgets/webview.dart';
 import 'package:flutter/material.dart';
@@ -118,8 +119,7 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
-          Image.asset('assets/images/chucknorris_logo.png',
-              width: 150, height: 150),
+          const RotateImage(),
           if (searchController.text.isEmpty)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -248,7 +248,7 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                                     child: Text(randomJoke[index].value),
                                   ),
                                   const SizedBox(
-                                    height: 10,
+                                    height: 20,
                                   ),
                                 ],
                               ),
@@ -260,10 +260,13 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                                 //   width: 20,
                                 //   height: 20,
                                 // ), // !!cant use because image link dead
-                                child: Image.asset(
-                                    'assets/images/chuck_norris_avatar.png',
-                                    width: 20,
-                                    height: 20),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset(
+                                      'assets/images/chuck_norris_avatar.png',
+                                      width: 20,
+                                      height: 20),
+                                ),
                               )
                             ],
                           ),
