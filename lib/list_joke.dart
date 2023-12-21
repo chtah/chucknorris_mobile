@@ -259,9 +259,11 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                  color: Color.fromARGB(255, 241, 90, 36))),
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                              color: Color.fromARGB(255, 241, 90, 36),
+                            ),
+                          ),
                           child: Stack(
                             children: [
                               Column(

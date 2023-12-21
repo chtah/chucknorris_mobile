@@ -20,6 +20,9 @@ class _QuestionAnswer extends State<QuestionAnswer> {
   Widget build(BuildContext context) {
     return ListView(
       children: const [
+        SizedBox(
+          height: 10,
+        ),
         QACard(
             question:
                 'Q : ระหว่าง SingleChildScrollView กับ ListView เลือกใช้อะไร และทำไม ?',
