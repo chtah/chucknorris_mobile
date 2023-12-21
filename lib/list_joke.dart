@@ -24,6 +24,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
   String categoryController = 'random';
   int totalJoke = 1;
   List<JokeModel> fetchedJokes = [];
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -106,7 +107,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
           },
         );
       } catch (error) {
-        print('Error fetching search results: $error');
+        errorMessage = 'Error Message: $error';
       }
     }
   }
@@ -179,6 +180,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                         onPressed: () {
                           setState(() {
                             searchController.clear();
+                            FocusScope.of(context).unfocus();
                           });
                         },
                       ),
@@ -200,7 +202,10 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: errorMessage.isNotEmpty
+                          ? Text(errorMessage)
+                          : const CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
