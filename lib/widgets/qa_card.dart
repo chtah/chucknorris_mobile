@@ -30,6 +30,10 @@ class _QACard extends State<QACard> {
               widget.question,
               style: const TextStyle(color: Colors.blue),
             ),
+            trailing: Icon(
+              isExpanded ? Icons.expand_less : Icons.expand_more,
+              color: Colors.blue,
+            ),
             onTap: () {
               setState(
                 () {
@@ -40,10 +44,22 @@ class _QACard extends State<QACard> {
           ),
           if (isExpanded)
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.answer,
-                style: const TextStyle(color: Colors.red),
+              padding: const EdgeInsets.all(18.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('A : ',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 233, 33, 19))),
+                  Expanded(
+                    child: Text(
+                      widget.answer,
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 233, 33, 19)),
+                      softWrap: true,
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
