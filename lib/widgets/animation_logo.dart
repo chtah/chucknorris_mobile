@@ -29,13 +29,16 @@ class _RotateImage extends State<RotateImage>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: RotationTransition(
-        turns: animation,
-        child: Image.asset(
-          'assets/images/chucknorris_logo.png',
-          width: 150,
-          height: 150,
+    return SizedBox(
+      height: 130,
+      child: Center(
+        child: RotationTransition(
+          turns: animation,
+          child: Image.asset(
+            'assets/images/chucknorris_logo.png',
+            width: 150,
+            height: 150,
+          ),
         ),
       ),
     );

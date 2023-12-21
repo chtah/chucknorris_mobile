@@ -124,36 +124,36 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: DropdownList(
-                    itemList: categories,
-                    controller: categoryController,
-                    onChange: (value) {
-                      if (value != 'random') {
-                        setState(
-                          () {
-                            categoryController = value;
-                            updateRandomJokes();
-                            _saveState();
-                          },
-                        );
-                      } else {
-                        setState(
-                          () {
-                            categoryController = value;
-                            updateRandomJokes();
-                            _saveState();
-                          },
-                        );
-                      }
-                    },
-                  ),
+                DropdownList(
+                  itemList: categories,
+                  controller: categoryController,
+                  label: 'Category',
+                  onChange: (value) {
+                    if (value != 'random') {
+                      setState(
+                        () {
+                          categoryController = value;
+                          updateRandomJokes();
+                          _saveState();
+                        },
+                      );
+                    } else {
+                      setState(
+                        () {
+                          categoryController = value;
+                          updateRandomJokes();
+                          _saveState();
+                        },
+                      );
+                    }
+                  },
                 ),
+                const SizedBox(width: 50),
                 if (searchController.text.isEmpty)
                   DropdownList(
                     itemList: const ['1', '5', '10'],
                     controller: totalJoke.toString(),
+                    label: 'Total',
                     onChange: (value) {
                       if (value != null) {
                         setState(
