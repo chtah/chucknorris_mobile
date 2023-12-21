@@ -177,6 +177,10 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                     controller: searchController,
                     decoration: InputDecoration(
                       hintText: 'Enter search text',
+                      hintStyle: const TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () {
@@ -195,7 +199,13 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                     FocusScope.of(context).unfocus();
                     _saveState();
                   },
-                  child: const Text('Search'),
+                  child: const Text(
+                    'Search',
+                    style: TextStyle(
+                        fontFamily: 'Courier New',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
@@ -245,10 +255,16 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(randomJoke[index].value),
+                                    child: Text(
+                                      randomJoke[index].value,
+                                      style: const TextStyle(
+                                          fontFamily: 'Courier New',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                   const SizedBox(
-                                    height: 20,
+                                    height: 10,
                                   ),
                                 ],
                               ),

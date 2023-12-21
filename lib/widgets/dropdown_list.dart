@@ -30,11 +30,21 @@ class DropdownList extends StatelessWidget {
                   (value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value),
+                      child: Text(value,
+                          style: const TextStyle(
+                              fontFamily: 'Courier New',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold)),
                     );
                   },
                 ).toList(),
-                hint: Text(controller == 'random' ? 'random' : controller),
+                hint: Text(
+                  controller == 'random' ? 'random' : controller,
+                  style: const TextStyle(
+                      fontFamily: 'Courier New',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
                 onChanged: onChange,
               ),
             ),

@@ -25,7 +25,11 @@ class _WebViewScreen extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Joke Link'),
+        title: const Text('Joke Link',
+            style: TextStyle(
+                fontFamily: 'Courier New',
+                fontSize: 20,
+                fontWeight: FontWeight.bold)),
       ),
       body: WebViewWidget(
         controller: controller,

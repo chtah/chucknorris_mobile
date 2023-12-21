@@ -27,7 +27,11 @@ class _MyApp extends State<MyApp> {
           title: const Center(
             child: Text(
               'chucknorris',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Courier New',
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           backgroundColor: const Color.fromARGB(255, 241, 90, 36),
