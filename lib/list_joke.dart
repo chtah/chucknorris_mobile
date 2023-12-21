@@ -11,11 +11,11 @@ class ListJoke extends StatefulWidget {
 
   @override
   State<ListJoke> createState() {
-    return _List();
+    return _ListJoke();
   }
 }
 
-class _List extends State<ListJoke> with WidgetsBindingObserver {
+class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
   late Future<List<JokeModel>> randomJokes = Future.value([]);
   late Future<List<String>> allCategories = Future.value([]);
   late TextEditingController searchController = TextEditingController();
