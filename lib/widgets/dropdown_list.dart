@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DropdownCategories extends StatelessWidget {
-  const DropdownCategories({
+class DropdownList extends StatelessWidget {
+  const DropdownList({
     super.key,
     required this.itemList,
     required this.controller,

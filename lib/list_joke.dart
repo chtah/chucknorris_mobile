@@ -1,5 +1,5 @@
 import 'package:chucknorris/model/search_model.dart';
-import 'package:chucknorris/widgets/dropdown_categories.dart';
+import 'package:chucknorris/widgets/dropdown_list.dart';
 import 'package:chucknorris/widgets/webview.dart';
 import 'package:flutter/material.dart';
 import 'package:chucknorris/provider/joke_get.dart';
@@ -123,7 +123,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: DropdownCategories(
+                  child: DropdownList(
                     itemList: categories,
                     controller: categoryController,
                     onChange: (value) {
@@ -148,7 +148,7 @@ class _List extends State<ListJoke> with WidgetsBindingObserver {
                   ),
                 ),
                 if (searchController.text.isEmpty)
-                  DropdownCategories(
+                  DropdownList(
                     itemList: const ['1', '5', '10'],
                     controller: totalJoke.toString(),
                     onChange: (value) {
