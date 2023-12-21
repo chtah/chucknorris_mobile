@@ -115,9 +115,11 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
+          Image.asset('assets/images/chucknorris_logo.png',
+              width: 150, height: 150),
           if (searchController.text.isEmpty)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -188,7 +190,11 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: searchJokes,
+                  onPressed: () {
+                    searchJokes;
+                    FocusScope.of(context).unfocus();
+                    _saveState();
+                  },
                   child: const Text('Search'),
                 ),
               ],
@@ -235,13 +241,25 @@ class _ListJoke extends State<ListJoke> with WidgetsBindingObserver {
                         child: Card(
                           child: Stack(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(randomJoke[index].value),
+                              Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(randomJoke[index].value),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                ],
                               ),
                               Positioned(
                                 bottom: 6,
                                 right: 6,
+                                // child: Image.network(
+                                //   randomJoke[index].icon_url,
+                                //   width: 20,
+                                //   height: 20,
+                                // ), // !!cant use because image link dead
                                 child: Image.asset(
                                     'assets/images/chuck_norris_avatar.png',
                                     width: 20,
