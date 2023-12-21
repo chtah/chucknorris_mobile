@@ -49,7 +49,6 @@ class JokeGet {
         final List<dynamic> results = decodedRes['result'];
         final List<JokeModel> jokes =
             results.map((result) => JokeModel.fromJson(result)).toList();
-        print(jokes);
         return jokes;
       } else {
         throw Exception('Invalid response format');
